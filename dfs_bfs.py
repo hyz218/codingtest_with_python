@@ -80,8 +80,36 @@ def bfs_ex():
     visited = [False] * 9
     bfs(graph,1,visited)
 
+
+
+#DFS
 #음료수 얼려 먹기
 def freeze_beverage():
     N,M = map(int,input().split())
-    
+
+    graph = []
+    for i in range(N):
+        graph.append(list(map(int,input())))
+
+    def dfs(x,y): #DFS
+        if x<=-1 or x>=N or y<=-1 or y>=M: #범위를 벗어나면 종료
+            return False
+        if graph[x][y]==0: #해당 노드를 방문하지 않았다면
+            graph[x][y] = 1 #해당 노드 방문 처리
+            #상하좌우 재귀적 호출
+            dfs(x-1,y)
+            dfs(x,y-1)
+            dfs(x+1,y)
+            dfs(x,y+1)
+            return True
+        return False
+
+    result = 0
+    for i in range(N):
+        for j in range(M):
+            if dfs(i,j) == True:
+                result+=1
+
+    return result
+
 
