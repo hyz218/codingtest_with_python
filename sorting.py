@@ -110,3 +110,43 @@ def sort_function():
     print(result)
 
     return result, array,  result2
+
+def top_to_bottom():
+    n = input()
+
+    array = []
+    for i in range(n):
+        array.append(int(input()))
+
+    array.sort(reverse=True) #내림차순 정렬
+
+    return array
+
+
+def student_score():
+    n = int(input())
+
+    array = []
+    for i in range(n):
+        input_data = input().split()
+        array.append((input_data[0],int(input_data[1])))
+
+    array.sort(key=lambda x:x[1]) #두번째 원소로 정렬
+
+    return array
+
+def swap_two_array_k():
+    n,k = map(int,input().split())
+    a = list(map(int,input().split()))
+    b = list(map(int,input().split()))
+
+    a.sort() #오름차순 정렬
+    b.sort(reverse=True) #내림차순 정렬
+
+    for i in range(k): #k까지 도는 반복문
+        if a[i] < b[i]: #a의 제일 작은 원소가 b의 제일 큰 원소보다 작을 경우
+            a[i], b[i] = b[i], a[i] #swap
+        else: #아닌 경우 반복문 빠져나오기
+            break
+
+    return (sum(a))
