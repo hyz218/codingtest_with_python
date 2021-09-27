@@ -134,3 +134,26 @@ def find_component_set():
             print("No",end=' ')
 
     return order
+
+def make_tteok():
+    n, m = list(map(int,input().split(' '))) #떡의 개수와 길이 입력받기
+    array = list(map(int,input().split())) #떡의 높이 입력받기
+
+    start = 0 #start 초기화
+    end = max(array) #end 초기화
+
+    result = 0 #result 초기화
+    while(start<=end): #이진탐색 수행
+        total = 0 #총 길이 초기화
+        mid = (start+end)//2 #mid 값 생성
+
+        for x in array: #array를 도는 반복문
+            if x>mid: #떡의 길이가 mid보다 길다면
+                total+=x-mid #잘린 길이를 total에 더하기
+        if total<m: #총 길이가 필요한 길이보다 짧다면
+            end = mid - 1 #end 줄이기
+        else: #총 길이가 필요한 길이보다 길다면 
+            result = mid #result에 mid 저장
+            start = mid+1 #start를 늘려서 다시 반복문 수행
+
+    return result
