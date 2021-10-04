@@ -125,3 +125,81 @@ def floyd_warshall():
     return graph
 
 #floyd_warshall()
+
+def future_city():
+    INF = int(1e9)
+    
+    n,m = map(int, input().split()) #노드와 간선의 갯수 입력받기
+    graph = [[INF]*(n+1) for _ in range(n+1)] #2차원 리스트(graph 표현)를 만들고, 모든 값을 무한 값으로 초기화
+
+    for a in range(1,n+1): #자기 자신으로 가는 비용 0으로 초기화
+        for b in range(1,n+1):
+            if a==b:
+                graph[a][b] = 0
+
+    for _ in range(m): #이어진 간선 값 1로 변경
+        a,b = map(int, input().split())
+        graph[a][b] = 1
+        graph[b][a] = 1
+
+    x, k = map(int, input().split()) #거쳐가야 할 노드 x와 종착 노드 k 입력받기
+
+    for k in range(1,n+1): #점화식에 따라 플로이드 워셜 알고리즘 수행
+        for a in range(1,n+1):
+            for b in range(1,n+1):
+                graph[a][b] = min(graph[a][b],graph[a][k]+graph[k][b])
+
+    distance = graph[1][k] + graph[k][x] #1에서 k까지, j에서 x까지의 거리
+
+    if distance>=INF: #갈 수 없는 경우 -1 return
+        print(-1)
+    else:
+        print(distance)
+
+    return distance
+
+#future_city()
+
+import heapq
+import sys
+
+def message():
+    input = sys.stdin.readline #input 선언
+    INF=int(1e9) #무한값 선언
+
+    n,m,start = map(int,input().split()) #노드의 갯수, 간선의 갯수, 시작 노드 입력받기
+    graph = [[] for i in range(n+1)] #노드 리스트 초기화
+    distance = [INF] * (n+1) #거리 무한값으로 초기화
+
+    for _ in range(m):
+        x, y, z = map(int, input().split()) #x번째 노드에서 y번째 노드로 가는 cost 입력받기
+        graph[x].append((y,z)) #x에 대해 y노드로 가는 cost list에 추가
+
+    def dijkstra(start): #다익스트라 알고리즘
+        q=[] #큐 초기화
+        heapq.heappush(q,(0,start)) #힙 생성 후 시작노드로 가는 최단경로 0으로 추가
+        distance[start] = 0 
+        while q: #q가 비어있지 않은 경우 반복
+            dist, now = heapq.heappop(q) #최단거리인 노드와 길이 꺼내기
+            if distance[now]<dist: #꺼낸 거리가 더 긴경우 continue
+                continue
+            for i in graph[now]: #현재 노드와 연결된 다른 노드 확인
+                cost = dist + i[1] #현재 노드를 거쳐 이동하는 경우가 더 짧은 경우
+                if cost<distance[i[0]]:
+                    distance[i[0]] = cost
+                    heapq.heappush(q,(cost,i[0])) #힙에 그 값 추가하기
+
+    dijkstra(start) #다익스트라 알고리즘 실행
+
+    count = 0 #도달할  수 있는 노드 갯수
+    max_distance = 0 #도달할 수 있는 노드 중 가장 멀리 있는 노드의 최단거리
+    for d in distance:
+        if d!=INF: #도달할 수 있는 노드인 경우
+            count+=1
+            max_distance = max(max_distance,d) #가장 큰 값 update
+
+    print(count-1,max_distance)
+
+    return max_distance
+
+#message()
