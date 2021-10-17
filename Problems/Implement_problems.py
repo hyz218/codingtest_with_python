@@ -101,4 +101,90 @@ def Lock_and_key():
     
     return solution([[0, 0, 0], [1, 0, 0], [0, 1, 1]], [[1, 1, 1], [1, 1, 0], [1, 0, 1]])
 
-print(Lock_and_key())
+#print(Lock_and_key())
+
+def snake():
+    N = int(input())
+    K = int(input())
+    data = [[0]*(N+1) for _ in range(N+1)] #맵 정보
+    info = [] #방향 회전 정보
+    for i in range(K): #맵 정보(사과가 있는 곳 1로 표시)
+        a,b = map(int,input().split())
+        data[a][b] = 1
+    
+    l=int(input()) #방향 회전 정보 입력
+    for i in range(l):
+        x,c = input().split()
+        info.append((int(x),c))
+
+    dx = [0,1,0,-1] #처음에 오른쪽을 보고 있으므로(동 남 서 북)
+    dy = [1,0,-1,0]
+
+    def turn(direction,C): #방향을 도는 함수
+        if c=='L':
+            direction = (direction-1)%4
+        else:
+            direction = (direction+1)%4
+        return direction
+
+    x,y = 1,1 #뱀의 머리 위치
+    data[x][y] =2 #뱀이 존재하는 위치를 2로 표시
+    direction = 0 #동쪽을 바라보는 걸 표시
+    time = 0 #시작한 뒤에 지난 초 시간
+    index = 0 #다음 회전 정보 
+    q=[(x,y)] #뱀이 차지하고 있는 위치(꼬리가 앞) 
+    while True:
+        nx = x+dx[direction]
+        ny = y+dy[direction]
+        if 1<=nx and nx<=N and 1<=ny and ny<=N and data[nx][ny]!=2: #맵 범위 안에 있고 뱀의 몸통이 없는 위치라면
+            if data[nx][ny] == 0: #사과가 없다면 이동 후 꼬리 제거
+                data[nx][ny] = 2
+                q.append((nx,ny))
+                px,py = q.pop(0)
+                data[px][py] = 0
+            if data[nx][ny]==1: #사과가 있다면 이동 후 꼬리 놔두기
+                data[nx][ny]=2
+                q.append((nx,ny))
+        else: #벽이나 뱀의 몸통이 부딪혔다면
+            time+=1
+            break
+        x,y = nx,ny #다음 위치로 머리 이동
+        time+=1 #시간 추가
+        if index<l and time==info[index][0]: #회전할 시간인 경우 회전
+            direction = turn(direction,info[index][1])
+            index+=1
+
+    return time
+
+#print(snake())
+
+def build_frame():
+    def possible(answer): #현재 설치된 구조물이 가능한 구조물인지 확인하는 함수
+        for x,y,stuff in answer: 
+            if stuff==0: #설치된게 기둥인 경우
+                if y==0 or [x-1,y,1] in answer or [x,y,1] in answer or [x,y-1,0] in answer: #바닥 위 or 보의 한쪽 끝부분 위 or 다른 기둥 위라면 정상
+                    continue
+                return False #아니라면 return False
+            elif stuff==1: #설치된게 보인 경우
+                if [x,y-1,0] in answer or [x+1,y-1,0] in answer or ([x-1,y,1] in answer and [x+1,y,1] in answer): #한쪽 끝이 기둥 위 or 양쪽 끝부분이 다른 보와 동시에 연결이면 정상
+                    continue
+                return False #아니라면 return False
+        return True
+
+    def solution(n, build_frame):
+        answer = []
+        for frame in build_frame:
+            x,y,stuff,operate = frame
+            if operate == 0: #삭제하는 경우
+                answer.remove([x,y,stuff]) #일단 삭제하고
+                if not possible(answer): #가능한 구조물인지 확인
+                    answer.append([x,y,stuff]) #가능한 구조물이 아니면 다시 설치
+            if operate==1: #설치하는 경우
+                answer.append([x,y,stuff]) #일단 설치하고
+                if not possible(answer): #가능한 구조물인지 확인
+                    answer.remove([x,y,stuff]) #가능한 구조물이 아니라면 다시 제거
+        return sorted(answer) #정렬된 결과 반환
+
+    return solution(5,[[1,0,0,1],[1,1,1,1],[2,1,0,1],[2,2,1,1],[5,0,0,1],[5,1,0,1],[4,2,1,1],[3,2,1,1]])
+
+#print(build_frame)
