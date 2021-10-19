@@ -91,7 +91,7 @@ def find_length_city():
 
 # research_center()
 
-    def convert_Parenthesis():
+def convert_Parenthesis():
     def balance_index(p): #균형잡힌 괄호 문자열 인덱스 반환
         count = 0 #왼쪽 괄호의 갯수
         for i in range(len(p)):
@@ -138,3 +138,40 @@ def find_length_city():
         return answer
 
     return print(solution('()))((('))
+
+from collections import deque
+def fight_infection():
+    N,K = map(int,input().split(' '))
+
+    graph = [] #전체 보드 정보를 담는 리스트
+    data = [] #바이러스 정보를 담는 리스트
+
+    for i in range(N):
+        graph.append(list(map(int, input().split(' ')))) #보드를 줄 단위로 입력받기
+        for j in range(N):
+            if graph[i][j]!=0: #해당 위치에 바이러스가 존재하는 경우
+                data.append((graph[i],0,i,j))
+    
+    data.sort()
+    q = deque(data)
+
+    target_s, target_x, target_y = map(int,input().split(' '))
+
+    dx = [-1,0,1,0] #바이러스가 퍼져나갈 수 있는 4가지 위치
+    dy = [0,1,0,-1]
+
+    while q: #너비 우선 탐색 진행
+        virus, s, x, y = q.popleft()
+        if s==target_s: #정확히 s초가 지나거나, 큐가 빌 때 까지 반복
+            break
+        for i in range(4):
+            nx = x+dx[i]
+            ny = y+dy[i]
+            if 0<=nx and nx<N and 0>=ny and ny<N: #아직 방문하지 않은 위치라면 그 위치에 바이러스 넣기
+                if graph[nx][ny] == 0:
+                    graph[nx][ny] = virus
+                    q.append((virus,s+1,nx,ny))
+
+    return graph[target_x-1][target_y-1]
+
+#print(fight_infection())
