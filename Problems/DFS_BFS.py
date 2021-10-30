@@ -175,3 +175,53 @@ def fight_infection():
     return graph[target_x-1][target_y-1]
 
 #print(fight_infection())
+
+def Convert_Parenthesis():
+    def balance_index(p): #균형잡힌 괄호 문자열 인덱스 반환
+        count = 0 #왼쪽 괄호의 갯수
+        for i in range(len(p)):
+            if p[i]=='(':
+                count+=1
+            else: 
+                count-=1
+            if count==0:
+                return i
+        
+    def check_proper(p): #올바른 괄호 문자열 판단
+        count = 0
+        for i in p:
+            if i=='(':
+                count+=1
+            else:
+                if count==0: #쌍이 맞지 않는 경우 False 반환
+                    return False
+                count-=1
+        return True
+
+    def solution(p):
+        answer = ''
+        if p=='':
+            return answer
+        index = balance_index(p)
+        u = p[:index+1]
+        v = p[index+1:]
+        #올바른 괄호 문자열이면 v에 함수 결과 붙여서 반환
+        if check_proper(u):
+            answer = u+solution(v)
+        else: #아니라면 아래 과정 수행
+            answer = '('
+            answer+=solution(v)
+            answer+=')'
+            u=list(u[1:-1])
+            for i in range(len(u)):
+                if u[i]=='(':
+                    u[i]=')'
+                else:
+                    u[i]='('
+            answer+="".join(u)
+            
+        return answer
+
+    solution("(()())()")
+
+#print(Convert_Parenthesis())
